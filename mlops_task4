@@ -1,0 +1,37 @@
+I have Develope a project using transfer learning 
+Image Classification,using Deeplearning Mobilenet
+In in this project i have collect four diffrent type images(in this project i have use four animals images)
+some images used for model traning and some images are used for moedel testing 
+in this model i have get 90+ accurecy in 2-4 epoch
+
+from keras.applications import MobileNet
+
+# MobileNet was designed to work on 224 x 224 pixel input images sizes
+img_rows, img_cols = 224, 224 
+
+# Re-loads the MobileNet model without the top or FC layers
+MobileNet = MobileNet(weights = 'imagenet', 
+                 include_top = False, 
+                 input_shape = (img_rows, img_cols, 3))
+
+# Here we freeze the last 4 layers 
+# Layers are set to trainable as True by default
+for layer in MobileNet.layers:
+    layer.trainable = False
+    
+# Let's print our layers 
+for (i,layer) in enumerate(MobileNet.layers):
+    print(str(i) + " "+ layer.__class__.__name__, layer.trainable)
+    
+    
+    def lw(bottom_model, num_classes):
+    """creates the top or head of the model that will be 
+    placed ontop of the bottom layers"""
+
+    top_model = bottom_model.output
+    top_model = GlobalAveragePooling2D()(top_model)
+    top_model = Dense(1024,activation='relu')(top_model)
+    top_model = Dense(1024,activation='relu')(top_model)
+    top_model = Dense(512,activation='relu')(top_model)
+    top_model = Dense(num_classes,activation='softmax')(top_model)
+    return top_model
